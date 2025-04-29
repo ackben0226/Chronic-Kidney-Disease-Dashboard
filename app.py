@@ -527,5 +527,7 @@ def make_prediction(n_clicks, *inputs):
     except requests.exceptions.RequestException as e:
         return dbc.Alert(f"API Error: {str(e)}", color="danger")
 
+application = app.server
+
 if __name__ == "__main__":
     app.run(debug=True, port=8052)
