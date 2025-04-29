@@ -73,6 +73,7 @@ app = Dash(
     title="CKD Prediction Dashboard",
     suppress_callback_exceptions=True
 )
+server = app.server 
 
 # Layout
 app.layout = dbc.Container([
