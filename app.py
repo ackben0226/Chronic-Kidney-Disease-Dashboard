@@ -530,4 +530,4 @@ def make_prediction(n_clicks, *inputs):
 application = server
 
 if __name__ == "__main__":
-    app.run(debug=True, port=8052)
+    application.run(debug=True, port=8052)
