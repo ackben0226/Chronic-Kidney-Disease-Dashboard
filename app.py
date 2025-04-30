@@ -66,6 +66,17 @@ except Exception as e:
     print(f"Error loading data: {e}")
     data = None
 
+# Send prediction request to FastAPI
+def get_prediction(payload):
+    try:
+        response = requests.post(API_URL, json=payload)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return {"error": f"API returned status code {response.status_code}"}
+    except Exception as e:
+        return {"error": str(e)}
+
 # Initialize Dash app
 app = Dash(
     __name__,
