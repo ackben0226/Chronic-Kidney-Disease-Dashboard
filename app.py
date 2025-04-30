@@ -190,21 +190,20 @@ def render_tab_content(tab):
         if not numeric_data.empty:
             try:
                 corr_matrix = numeric_data.corr()
-                mask = np.triu(np.ones_like(corr_matrix, dtype=bool))
+                mask = np.tril(np.ones_like(corr_matrix, dtype=bool))
 
-                # Create annotated heatmap
+                # Create annotated heatmap - FIXED THIS PART
                 heatmap_fig = go.Figure(data=go.Heatmap(
-                    z=corr_matrix.mask(mask),  # Only show lower triangle
+                    z=corr_matrix.mask(mask).values,  # Only show lower triangle
                     x=corr_matrix.columns,
                     y=corr_matrix.columns,
                     colorscale='RdBu',
                     zmin=-1,
                     zmax=1,
-                    text=np.around(corr_matrix.mask(mask).values,  # Show values
-                    texttemplate="%{text:.2f}",
+                    text=np.around(corr_matrix.mask(mask).values, 2),  # Fixed: Provide text matrix
                     hoverinfo="text",
                     colorbar=dict(title='Correlation')
-                )))
+                ))
 
                 # Adjust layout
                 heatmap_fig.update_layout(
@@ -250,7 +249,7 @@ def render_tab_content(tab):
                         data=data.head().to_dict("records"),
                         columns=[{"name": i, "id": i} for i in data.columns],
                         style_table={"overflowX": "auto"},
-                        page_size=5,
+                        page_size=10,
                         style_cell={'textAlign': 'left'},
                         style_header={
                             'backgroundColor': 'rgb(230, 230, 230)',
@@ -334,7 +333,7 @@ def render_tab_content(tab):
             roc_fig.add_trace(go.Scatter(
                 x=fpr, y=tpr,
                 mode='lines',
-                name=f"Random Forest (AUC={rf_metrics.get('auc', 0):.2f}"
+                name=f"Random Forest (AUC={rf_metrics.get('auc', 0):.2f})"  # Fixed: Added closing parenthesis
             ))
 
         if "roc_curve" in xgb_metrics:
@@ -342,7 +341,7 @@ def render_tab_content(tab):
             roc_fig.add_trace(go.Scatter(
                 x=fpr, y=tpr,
                 mode='lines',
-                name=f"XGBoost (AUC={xgb_metrics.get('auc', 0):.2f}"
+                name=f"XGBoost (AUC={xgb_metrics.get('auc', 0):.2f})"  # Fixed: Added closing parenthesis
             ))
 
         roc_fig.add_trace(go.Scatter(
@@ -367,7 +366,6 @@ def render_tab_content(tab):
                 y=["Healthy", "At Risk"],
                 colorscale="Blues",
                 text=cm,
-                texttemplate="%{text}",
                 hoverinfo="text"
             ))
             fig.update_layout(
@@ -530,4 +528,4 @@ def make_prediction(n_clicks, *inputs):
 application = server
 
 if __name__ == "__main__":
-    app.run_server(debug=True, port=8052)
+    app.run(debug=True, port=8053)
